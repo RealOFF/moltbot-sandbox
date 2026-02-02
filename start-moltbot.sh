@@ -105,6 +105,17 @@ if [ -d "$BACKUP_DIR/skills" ] && [ "$(ls -A $BACKUP_DIR/skills 2>/dev/null)" ];
     fi
 fi
 
+# Restore memory.md from R2 backup if available
+WORKSPACE_DIR="/root/clawd"
+if [ -f "$BACKUP_DIR/memory.md" ]; then
+    if should_restore_from_r2; then
+        echo "Restoring memory.md from $BACKUP_DIR/memory.md..."
+        mkdir -p "$WORKSPACE_DIR"
+        cp -f "$BACKUP_DIR/memory.md" "$WORKSPACE_DIR/memory.md"
+        echo "Restored memory.md from R2 backup"
+    fi
+fi
+
 # If config file still doesn't exist, create from template
 if [ ! -f "$CONFIG_FILE" ]; then
     echo "No existing config found, initializing from template..."
