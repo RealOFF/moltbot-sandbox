@@ -259,6 +259,30 @@ if (isOpenAI) {
     config.agents.defaults.models['anthropic/claude-sonnet-4-5-20250929'] = { alias: 'Sonnet 4.5' };
     config.agents.defaults.models['anthropic/claude-haiku-4-5-20251001'] = { alias: 'Haiku 4.5' };
     config.agents.defaults.model.primary = 'anthropic/claude-opus-4-5-20251101';
+} else if (process.env.OPENROUTER_API_KEY) {
+    // Configure OpenRouter provider with Kimi K2.5 as default
+    console.log('Configuring OpenRouter provider');
+    config.models = config.models || {};
+    config.models.providers = config.models.providers || {};
+    config.models.providers.openrouter = {
+        baseUrl: 'https://openrouter.ai/api/v1',
+        api: 'openai-completions',
+        apiKey: process.env.OPENROUTER_API_KEY,
+        models: [
+            { id: 'moonshotai/kimi-k2.5', name: 'Kimi K2.5', contextWindow: 131072 },
+            { id: 'anthropic/claude-sonnet-4', name: 'Claude Sonnet 4', contextWindow: 200000 },
+            { id: 'google/gemini-2.5-pro-preview', name: 'Gemini 2.5 Pro', contextWindow: 1000000 },
+        ]
+    };
+    // Set env for clawdbot to pick up
+    config.env = config.env || {};
+    config.env.OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+    // Add models to the allowlist
+    config.agents.defaults.models = config.agents.defaults.models || {};
+    config.agents.defaults.models['openrouter/moonshotai/kimi-k2.5'] = { alias: 'Kimi K2.5' };
+    config.agents.defaults.models['openrouter/anthropic/claude-sonnet-4'] = { alias: 'Claude Sonnet 4' };
+    config.agents.defaults.models['openrouter/google/gemini-2.5-pro-preview'] = { alias: 'Gemini 2.5 Pro' };
+    config.agents.defaults.model.primary = 'openrouter/moonshotai/kimi-k2.5';
 } else {
     // Default to Anthropic without custom base URL (uses built-in pi-ai catalog)
     config.agents.defaults.model.primary = 'anthropic/claude-opus-4-5';
