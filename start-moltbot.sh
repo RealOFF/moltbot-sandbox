@@ -105,14 +105,22 @@ if [ -d "$BACKUP_DIR/skills" ] && [ "$(ls -A $BACKUP_DIR/skills 2>/dev/null)" ];
     fi
 fi
 
-# Restore memory.md from R2 backup if available
+# Restore MEMORY.md and memory/ folder from R2 backup if available
 WORKSPACE_DIR="/root/clawd"
-if [ -f "$BACKUP_DIR/memory.md" ]; then
-    if should_restore_from_r2; then
-        echo "Restoring memory.md from $BACKUP_DIR/memory.md..."
+if should_restore_from_r2; then
+    # Restore MEMORY.md index file
+    if [ -f "$BACKUP_DIR/MEMORY.md" ]; then
+        echo "Restoring MEMORY.md from $BACKUP_DIR/MEMORY.md..."
         mkdir -p "$WORKSPACE_DIR"
-        cp -f "$BACKUP_DIR/memory.md" "$WORKSPACE_DIR/memory.md"
-        echo "Restored memory.md from R2 backup"
+        cp -f "$BACKUP_DIR/MEMORY.md" "$WORKSPACE_DIR/MEMORY.md"
+        echo "Restored MEMORY.md from R2 backup"
+    fi
+    # Restore memory/ folder with all memory files
+    if [ -d "$BACKUP_DIR/memory" ] && [ "$(ls -A $BACKUP_DIR/memory 2>/dev/null)" ]; then
+        echo "Restoring memory/ folder from $BACKUP_DIR/memory..."
+        mkdir -p "$WORKSPACE_DIR/memory"
+        cp -a "$BACKUP_DIR/memory/." "$WORKSPACE_DIR/memory/"
+        echo "Restored memory/ folder from R2 backup"
     fi
 fi
 
